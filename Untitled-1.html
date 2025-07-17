@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>متجرحسن العوادي للكتب</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .welcome-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        .welcome-screen h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .welcome-screen p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .enter-btn {
+            background: #fff;
+            color: #667eea;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .enter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .main-app {
+            display: none;
+            animation: slideIn 0.5s ease-in-out;
+        }
+
+        .main-app.active {
+            display: block;
+        }
+
+        .header {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #667eea;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-item {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            background: linear-gradient(135deg, #764ba2, #667eea);
+        }
+
+        .content {
+            padding: 2rem 0;
+            min-height: 70vh;
+        }
+
+        .section {
+            display: none;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            margin: 2rem 0;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeInUp 0.5s ease-in-out;
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            text-align: center;
+        }
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .book-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 1px solid #e0e0e0;
+        }
+
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .book-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .book-author {
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .book-price {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .book-category {
+            background: #f0f0f0;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            color: #666;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .search-container {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .search-box {
+            width: 100%;
+            max-width: 500px;
+            padding: 15px 20px;
+            border: 2px solid #667eea;
+            border-radius: 25px;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus {
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.3);
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .category-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .profile-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .footer {
+            background: rgba(0,0,0,0.8);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                justify-content: center;
+                width: 100%;
+                margin-top: 1rem;
+            }
+            
+            .nav-item {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+            
+            .welcome-screen h1 {
+                font-size: 2rem;
+            }
+            
+            .books-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- نافذة عرض تفاصيل الكتاب -->
+<div id="bookModal" style="display:none; position:fixed; top:0; right:0; bottom:0; left:0; background:rgba(0,0,0,0.8); z-index:9999; justify-content:center; align-items:center;">
+    <div style="background:white; padding:2rem; border-radius:15px; width:90%; max-width:600px; max-height:90vh; overflow-y:auto; position:relative; text-align:right;">
+        <button onclick="closeBookModal()" style="position:absolute; top:10px; left:10px; background:#764ba2; color:white; border:none; border-radius:50%; width:30px; height:30px; cursor:pointer;">×</button>
+        <img id="modalImage" src="" alt="" style="width:100%; height:auto; border-radius:10px; margin-bottom:1rem;">
+        <h2 id="modalTitle" style="color:#667eea;"></h2>
+        <h4 id="modalAuthor" style="color:#555;"></h4>
+        <p id="modalCategory" style="color:#888; font-style:italic;"></p>
+        <p id="modalPrice" style="color:#333; font-weight:bold;"></p>
+        <p id="modalDescription" style="margin-top:1rem; line-height:1.6;"></p>
+    </div>
+</div>
+
+    <!-- شاشة الترحيب -->
+    <div class="welcome-screen" id="welcomeScreen">
+        <h1>مرحباً بكم في متجر حسن العوادي</h1>
+        <p>أفضل مكان لشراء الكتب العربية والعالمية</p>
+        <button class="enter-btn" onclick="enterStore()">ادخل إلى المتجر</button>
+    </div>
+
+    <!-- التطبيق الرئيسي -->
+    <div class="main-app" id="mainApp">
+        <!-- الهيدر -->
+        <header class="header">
+            <div class="container">
+                <nav class="nav">
+                    <div class="logo">📚 متجر حسن العوادي</div>
+                    <div class="nav-menu">
+                        <button class="nav-item active" onclick="showSection('home')">الرئيسية</button>
+                        <button class="nav-item" onclick="showSection('search')">البحث</button>
+                        <button class="nav-item" onclick="showSection('categories')">التصنيفات</button>
+                        <button class="nav-item" onclick="showSection('add-book')">إضافة كتاب</button>
+                        <button class="nav-item" onclick="showSection('profile')">الملف الشخصي</button>
+                    </div>
+                </nav>
+            </div>
+        </header>
+
+        <!-- المحتوى الرئيسي -->
+        <main class="content">
+            <div class="container">
+                <!-- الصفحة الرئيسية -->
+                <section id="home" class="section active">
+                    <h2>مرحباً بكم في متجر حسن العوادي للكتب</h2>
+                    <p style="text-align: center; font-size: 1.1rem; margin-bottom: 2rem; color: #666;">
+                        اكتشف مجموعة رائعة من الكتب في مختلف التخصصات والمجالات
+                    </p>
+                    <div class="books-grid" id="featuredBooks">
+                        <!-- الكتب المميزة ستظهر هنا -->
+                    </div>
+                </section>
+
+                <!-- البحث -->
+                <section id="search" class="section">
+                    <h2>البحث عن الكتب</h2>
+                    <div class="search-container">
+                        <input type="text" class="search-box" placeholder="ابحث عن كتاب، مؤلف، أو تصنيف..." id="searchInput" onkeyup="searchBooks()">
+                    </div>
+                    <div class="books-grid" id="searchResults">
+                        <!-- نتائج البحث ستظهر هنا -->
+                    </div>
+                </section>
+
+                <!-- التصنيفات -->
+                <section id="categories" class="section">
+                    <h2>تصنيفات الكتب</h2>
+                    <div class="categories-grid">
+                        <div class="category-card" onclick="filterByCategory('دراما')">
+                            <h3>🎭 دراما</h3>
+                            <p>قصص درامية مؤثرة</p>
+                        </div>
+                        <div class="category-card" onclick="filterByCategory('أكشن')">
+                            <h3>⚔️ أكشن</h3>
+                            <p>قصص مليئة بالإثارة</p>
+                            </div>
+                        <div class="category-card" onclick="filterByCategory('رومانسي')">
+                            <h3>💕 رومانسي</h3>
+                            <p>قصص حب جميلة</p>
+                        </div>
+                        <div class="category-card" onclick="filterByCategory('خيال علمي')">
+                            <h3>🚀 خيال علمي</h3>
+                            <p>استكشاف المستقبل</p>
+                        </div>
+                        <div class="category-card" onclick="filterByCategory('تاريخ')">
+                            <h3>📜 تاريخ</h3>
+                            <p>أحداث من الماضي</p>
+                        </div>
+                        <div class="category-card" onclick="filterByCategory('فلسفة')">
+                            <h3>🤔 فلسفة</h3>
+                            <p>أفكار عميقة</p>
+                        </div>
+                    </div>
+                    <div class="books-grid" id="categoryResults" style="margin-top: 2rem;">
+                        <!-- نتائج التصنيف ستظهر هنا -->
+                    </div>
+                </section>
+
+                <!-- إضافة كتاب -->
+                <section id="add-book" class="section">
+                    <h2>إضافة كتاب جديد</h2>
+                    <form id="bookForm" onsubmit="addBook(event)">
+                        <div class="form-group">
+                            <label for="bookTitle">عنوان الكتاب</label>
+                            <input type="text" id="bookTitle" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="bookAuthor">المؤلف</label>
+                            <input type="text" id="bookAuthor" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="bookCategory">التصنيف</label>
+                            <select id="bookCategory" required>
+                                <option value="">اختر التصنيف</option>
+                                <option value="دراما">دراما</option>
+                                <option value="أكشن">أكشن</option>
+                                <option value="رومانسي">رومانسي</option>
+                                <option value="خيال علمي">خيال علمي</option>
+                                <option value="تاريخ">تاريخ</option>
+                                <option value="فلسفة">فلسفة</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="bookPrice">السعر (دينار)</label>
+                            <input type="number" id="bookPrice" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="bookDescription">وصف الكتاب</label>
+                            <textarea id="bookDescription" rows="4"></textarea>
+                        </div>
+                        <button type="submit" class="btn">إضافة الكتاب</button>
+                    </form>
+                </section>
+
+                <!-- الملف الشخصي -->
+                <section id="profile" class="section">
+                    <h2>الملف الشخصي</h2>
+                    <div class="profile-section">
+                        <h3>المعلومات الشخصية</h3>
+                        <form id="profileForm" onsubmit="updateProfile(event)">
+                            <div class="form-group">
+                                <label for="userName">الاسم الكامل</label>
+                                <input type="text" id="userName" value="المستخدم">
+                            </div>
+                            <div class="form-group">
+                                <label for="userEmail">البريد الإلكتروني</label>
+                                <input type="email" id="userEmail" value="user@example.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="userPhone">رقم الهاتف</label>
+                                <input type="tel" id="userPhone" value="07xx xxx xxxx">
+                            </div>
+                            <div class="form-group">
+                                <label for="userAddress">العنوان</label>
+                                <textarea id="userAddress" rows="3">النجف الأشرف، العراق</textarea>
+                            </div>
+                            <button type="submit" class="btn">تحديث المعلومات</button>
+                        </form>
+                    </div>
+                    
+                    <div class="profile-section">
+                        <h3>الكتب المضافة من قبلي</h3>
+                        <div class="books-grid" id="userBooks">
+                            <!-- الكتب المضافة من قبل المستخدم ستظهر هنا -->
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- الفوتر -->
+        <footer class="footer">
+            <div class="container">
+                <p>&copy; 2025 متجر حسن العوادي للكتب. جميع الحقوق محفوظة.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // بيانات الكتب (محفوظة في الذاكرة)
+        let books = [
+    {
+        id: 1,
+        title: "مئة عام من العزلة",
+        author: "غابرييل غارثيا ماركيث",
+        category: "دراما",
+        price: 25.50,
+        description: "رواية درامية رائعة تحكي قصة عائلة عبر مئة عام",
+        image: "https://upload.wikimedia.org/wikipedia/ar/c/c0/Cien_a%C3%B1os_de_soledad.jpg"
+    },
+    {
+        id: 2,
+        title: "هاري بوتر وحجر الفيلسوف",
+        author: "ج.ك. رولينغ",
+        category: "خيال علمي",
+        price: 30.00,
+        description: "مغامرات الساحر الصغير هاري بوتر",
+        image: "https://images-na.ssl-images-amazon.com/images/I/81YOuOGFCJL.jpg"
+    },
+    {
+        id: 3,
+        title: "الأسود يليق بك",
+        author: "أحلام مستغانمي",
+        category: "رومانسي",
+        price: 20.75,
+        description: "رواية رومانسية عربية جميلة",
+        image: "https://m.media-amazon.com/images/I/51XnKZUXhjL.jpg"
+    },
+    {
+        id: 4,
+        title: "تاريخ الطبري",
+        author: "محمد جرير الطبري",
+        category: "تاريخ",
+        price: 45.00,
+        description: "كتاب تاريخي شامل عن تاريخ الأمم والملوك",
+        image: "https://www.noor-book.com/publice/covers_cache_web/1/b/2/e/89b9d79b2b1b5b45cb0eb03a73bd2711.png"
+    },
+    {
+        id: 5,
+        title: "الجحيم",
+        author: "دانتي أليغيري",
+        category: "أكشن",
+        price: 35.25,
+        description: "رحلة ملحمية مليئة بالإثارة والمغامرة",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Inferno_Canto_1.jpg/800px-Inferno_Canto_1.jpg"
+    },
+    {
+        id: 6,
+        title: "تأملات في الفلسفة الأولى",
+        author: "رينيه ديكارت",
+        category: "فلسفة",
+        price: 28.00,
+        description: "كتاب فلسفي عميق يبحث في أساسيات المعرفة",
+        image: "https://images-na.ssl-images-amazon.com/images/I/71zzVzPS-LL.jpg"
+    }
+];
+        // معلومات المستخدم
+        let userProfile = {
+            name: "المستخدم",
+            email: "user@example.com",
+            phone: "07xx xxx xxxx",
+            address: "النجف الأشرف، العراق"
+        };
+
+        // الكتب المضافة من قبل المستخدم
+        let userBooks = [];
+
+        // دخول المتجر
+        function enterStore() {
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('mainApp').classList.add('active');
+            displayFeaturedBooks();
+        }
+
+        // عرض القسم المحدد
+        function showSection(sectionId) {
+            // إخفاء جميع الأقسام
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => section.classList.remove('active'));
+
+            // إظهار القسم المحدد
+            document.getElementById(sectionId).classList.add('active');
+            // تحديث أزرار التنقل
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => item.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // تحديث محتوى الأقسام
+            if (sectionId === 'home') {
+                displayFeaturedBooks();
+            } else if (sectionId === 'profile') {
+                displayUserBooks();
+            } else if (sectionId === 'search') {
+                document.getElementById('searchInput').focus();
+            }
+        }
+
+        // عرض الكتب المميزة
+        function displayFeaturedBooks() {
+            const container = document.getElementById('featuredBooks');
+            container.innerHTML = '';
+            
+            books.forEach(book => {
+                const bookCard = createBookCard(book);
+                container.appendChild(bookCard);
+            });
+        }
+
+        // إنشاء كارت الكتاب
+       function createBookCard(book) {
+    const card = document.createElement('div');
+    card.className = 'book-card';
+    card.innerHTML = `
+        <img src="${book.image}" alt="${book.title}" style="width:100%; height:200px; object-fit:cover; border-radius:10px; margin-bottom:1rem;">
+        <div class="book-title">${book.title}</div>
+        <div class="book-author">بقلم: ${book.author}</div>
+        <div class="book-category">${book.category}</div>
+        <div class="book-price">${book.price} دينار</div>
+    `;
+    card.addEventListener('click', () => {
+        showBookDetails(book);
+    });
+    return card;
+}
+
+
+        // البحث عن الكتب
+        function searchBooks() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const results = books.filter(book => 
+                book.title.toLowerCase().includes(searchTerm) ||
+                book.author.toLowerCase().includes(searchTerm) ||
+                book.category.toLowerCase().includes(searchTerm)
+            );
+            function showBookDetails(book) {
+    document.getElementById('modalImage').src = book.image;
+    document.getElementById('modalTitle').innerText = book.title;
+    document.getElementById('modalAuthor').innerText = "بقلم: " + book.author;
+    document.getElementById('modalCategory').innerText = "التصنيف: " + book.category;
+    document.getElementById('modalPrice').innerText = "السعر: " + book.price + " دينار";
+    document.getElementById('modalDescription').innerText = book.description;
+
+    document.getElementById('bookModal').style.display = 'flex';
+}
+
+function closeBookModal() {
+    document.getElementById('bookModal').style.display = 'none';
+}
+
+            
+            const container = document.getElementById('searchResults');
+            container.innerHTML = '';
+            
+            if (searchTerm === '') {
+                container.innerHTML = '<p style="text-align: center; color: #666;">ابدأ بكتابة كلمة البحث</p>';
+                return;
+            }
+            
+            if (results.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666;">لا توجد نتائج للبحث</p>';
+                return;
+            }
+            
+            results.forEach(book => {
+                const bookCard = createBookCard(book);
+                container.appendChild(bookCard);
+            });
+        }
+
+        // تصفية حسب التصنيف
+        function filterByCategory(category) {
+            const results = books.filter(book => book.category === category);
+            const container = document.getElementById('categoryResults');
+            container.innerHTML = '';
+            
+            if (results.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666;">لا توجد كتب في هذا التصنيف</p>';
+                return;
+            }
+            
+            results.forEach(book => {
+                const bookCard = createBookCard(book);
+                container.appendChild(bookCard);
+            });
+        }
+
+        // إضافة كتاب جديد
+        function addBook(event) {
+            event.preventDefault();
+            
+            const title = document.getElementById('bookTitle').value;
+            const author = document.getElementById('bookAuthor').value;
+            const category = document.getElementById('bookCategory').value;
+            const price = parseFloat(document.getElementById('bookPrice').value);
+            const description = document.getElementById('bookDescription').value;
+            
+            const newBook = {
+                id: Date.now(), // استخدام timestamp كمعرف فريد
+                title,
+                author,
+                category,
+                price,
+                description
+            };
+            
+            books.push(newBook);
+            userBooks.push(newBook);
+            
+            // إعادة تعيين النموذج
+            document.getElementById('bookForm').reset();
+            
+            alert('تم إضافة الكتاب بنجاح!');
+            
+            // تحديث العرض
+            displayFeaturedBooks();
+        }
+
+        // تحديث الملف الشخصي
+        function updateProfile(event) {
+            event.preventDefault();
+            
+            userProfile.name = document.getElementById('userName').value;
+            userProfile.email = document.getElementById('userEmail').value;
+            userProfile.phone = document.getElementById('userPhone').value;
+            userProfile.address = document.getElementById('userAddress').value;
+            
+            alert('تم تحديث المعلومات بنجاح!');
+        }
+
+        // عرض كتب المستخدم
+        function displayUserBooks() {
+            const container = document.getElementById('userBooks');
+            container.innerHTML = '';
+            
+            if (userBooks.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666;">لم تقم بإضافة أي كتب بعد</p>';
+                return;
+            }
+            
+            userBooks.forEach(book => {
+                const bookCard = createBookCard(book);
+                container.appendChild(bookCard);
+            });
+        }
+
+        // تحميل البيانات عند بدء التطبيق
+        window.onload = function() {
+            displayFeaturedBooks();
+        };
+    </script>
+</body>
+</html>
